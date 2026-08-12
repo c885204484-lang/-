@@ -92,6 +92,7 @@ void PetAction_Request(uint8_t action, uint8_t sustained)
 void PetAction_Stop(void)
 {
 	PetAction_Request(2, 0);
+	Servo_SetTargets(pose_stand[0].angle, 100);
 }
 
 uint8_t PetAction_IsBusy(void)
@@ -118,7 +119,13 @@ void PetAction_Task20ms(void)
 		}
 		else
 		{
-			if (active_action <= 3) { active_action = 0xFF; return; }
+			if (active_action <= 3)
+			{
+				if (active_action != 0) Face_Mode = 5;
+				active_action = 0xFF;
+				return;
+			}
+			Face_Mode = 5;
 			PetAction_Request(2, 0);
 			return;
 		}

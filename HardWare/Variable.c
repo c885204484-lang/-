@@ -32,3 +32,6 @@ uint16_t temp1=0;         //0-100次电量累加值
 uint16_t CurBattery;      //当前电量
 uint8_t Battery_num=0;    //获取电量滤波系数
 uint8_t Battery_Bit=1;
+uint8_t Battery_Charging=0;
+uint8_t Status_Display_Bit=0;
+uint8_t Status_Display_Seconds=0;

@@ -9,11 +9,16 @@ void GetBattery_Init(void)
 
 uint16_t GetBattery(void)
 {
-	float value = (3.3f * 4.0f * AD_GetAverage() / 4095.0f) * 100.0f - 300.0f;
-	if (value < 0) value = 0;
-	if (value > 999) value = 999;
-	Battery_Value = value;
-	return (uint16_t)value;
+	float raw = (3.3f * 4.0f * AD_GetAverage() / 4095.0f) * 100.0f - 300.0f;
+	uint16_t percent;
+	if (raw < 0) raw = 0;
+	if (raw > 120) raw = 120;
+	if (raw >= 110) Battery_Charging = 1;
+	else if (raw <= 105) Battery_Charging = 0;
+	percent = (uint16_t)(raw * 100.0f / 120.0f + 0.5f);
+	if (percent > 100) percent = 100;
+	Battery_Value = percent;
+	return percent;
 }
 
 void GetCur_Power(void)
@@ -28,4 +33,6 @@ void GetCur_Power(void)
 	if (count < 8) count++;
 	for (i = 0; i < count; i++) sum += history[i];
 	CurBattery = (uint16_t)(sum / count);
+	CurBattery = (uint16_t)(((CurBattery + 10) / 20) * 20);
+	if (CurBattery > 100) CurBattery = 100;
 }

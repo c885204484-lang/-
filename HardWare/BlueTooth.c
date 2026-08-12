@@ -58,10 +58,18 @@ static void SendFrame(uint8_t command, const uint8_t *data, uint8_t length)
 static void DispatchCommand(uint8_t command, const uint8_t *data, uint8_t length, uint8_t sustained)
 {
 	uint8_t response = 1;
-	if (command >= 0x29 && command <= 0x50) response = PetState_Command(command, sustained);
-	else if (command == 0x60) { BlueTooth_SendStatus(); return; }
+	if (command >= 0x28 && command <= 0x50) response = PetState_Command(command, sustained);
+	else if (command == 0x60) { Status_Display_Bit = 1; Status_Display_Seconds = 5; BlueTooth_SendStatus(); return; }
 	else if (command == 0x61) response = ConfigStore_Save();
-	else if (command == 0x62) { PetAction_Stop(); response = 1; }
+	else if (command == 0x62)
+	{
+		PetAction_Stop();
+		Face_Mode = 5;
+		Status_Display_Bit = 0;
+		WeiBa_Bit = 0;
+		Servo_SetTarget(4, 90, 100);
+		response = 1;
+	}
 	else if (command == 0x63 && length >= 2)
 	{
 		uint16_t speed = (uint16_t)data[0] * 10;

@@ -300,6 +300,56 @@ void OLED_Init(void)
 }
 
 /**
+  * 函    数：OLED热插拔唤醒
+  * 参    数：无
+  * 返 回 值：无
+  * 说    明：当OLED在程序运行后才插入时，需要重新发送配置命令
+  *           因为I2C不检查ACK，init时的命令在OLED不在时已丢失
+  *           此函数跳过GPIO初始化和长延时，只重发SSD1306配置
+  */
+void OLED_Wakeup(void)
+{
+	/* 重发所有硬件配置命令，确保热插拔的OLED脱离默认状态 */
+	OLED_WriteCommand(0xAE);	//关闭显示（先关再配置，避免花屏）
+
+	OLED_WriteCommand(0xD5);	//设置显示时钟分频比/振荡器频率
+	OLED_WriteCommand(0x80);
+
+	OLED_WriteCommand(0xA8);	//设置多路复用率
+	OLED_WriteCommand(0x3F);
+
+	OLED_WriteCommand(0xD3);	//设置显示偏移
+	OLED_WriteCommand(0x00);
+
+	OLED_WriteCommand(0x40);	//设置显示开始行
+
+	OLED_WriteCommand(0xA1);	//设置左右方向
+
+	OLED_WriteCommand(0xC8);	//设置上下方向
+
+	OLED_WriteCommand(0xDA);	//设置COM引脚硬件配置
+	OLED_WriteCommand(0x12);
+
+	OLED_WriteCommand(0x81);	//设置对比度
+	OLED_WriteCommand(0xCF);
+
+	OLED_WriteCommand(0xD9);	//设置预充电周期
+	OLED_WriteCommand(0xF1);
+
+	OLED_WriteCommand(0xDB);	//设置VCOMH取消选择级别
+	OLED_WriteCommand(0x30);
+
+	OLED_WriteCommand(0xA4);	//设置整个显示打开/关闭
+
+	OLED_WriteCommand(0xA6);	//设置正常显示（非反色）
+
+	OLED_WriteCommand(0x8D);	//设置充电泵
+	OLED_WriteCommand(0x14);
+
+	OLED_WriteCommand(0xAF);	//开启显示
+}
+
+/**
   * 函    数：OLED设置显示光标位置
   * 参    数：Page 指定光标所在的页，范围：0~7
   * 参    数：X 指定光标所在的X轴坐标，范围：0~127

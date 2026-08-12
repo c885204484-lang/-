@@ -10,7 +10,6 @@
 #include "Scheduler.h"
 #include "ConfigStore.h"
 #include "Watchdog.h"
-#include "PetState.h"
 
 int main(void)
 {
@@ -35,7 +34,7 @@ int main(void)
 	{
 		const PetStatus *pet = PetState_Get();
 		BlueTooth_Task();
-		if (Scheduler_Elapsed(&task20, 20)) PetAction_Task20ms();//每20ms跑一次
+		if (Scheduler_Elapsed(&task20, 20)) PetAction_Task20ms();
 		if (Scheduler_Elapsed(&task100, 100))
 		{
 			PetState_Task100ms();

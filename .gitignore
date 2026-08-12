@@ -1,0 +1,18 @@
+# Keil 编译产物
+Objects/
+Listings/
+*.o
+*.crf
+*.d
+*.axf
+*.hex
+*.htm
+*.dep
+*.map
+
+# Keil 用户界面状态（本机专属）
+Project.uvguix.*
+
+# IDE 日志
+.vscode/*.log
+.vscode/*.lock

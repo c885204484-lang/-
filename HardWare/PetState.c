@@ -5,6 +5,7 @@
 #include "Variable.h"
 #include "Servo.h"
 #include "ConfigStore.h"
+#include "Led_Breathing.h"
 
 #define SLEEP_TIMEOUT_MS 120000UL
 #define LOW_BATTERY_LEVEL 15
@@ -36,11 +37,13 @@ uint8_t PetState_Command(uint8_t command, uint8_t sustained)
 	uint8_t action = 0xFF;
 	status.last_interaction_ms = Scheduler_Millis();
 	status.sleeping = 0;
+	Status_Display_Bit = 0;
 	if (status.mood < 95) status.mood += 5;
 
 	switch (command)
 	{
-		case 0x29: action = 0; Face_Mode = 0; break;
+		case 0x28: action = 2; Face_Mode = 5; break;
+		case 0x29: action = 0; Face_Mode = 0; status.sleeping = 1; break;
 		case 0x30: action = 1; Face_Mode = 1; break;
 		case 0x31: action = 2; Face_Mode = 5; break;
 		case 0x32: action = 3; Face_Mode = 1; break;
@@ -55,14 +58,17 @@ uint8_t PetState_Command(uint8_t command, uint8_t sustained)
 		case 0x39:
 			if (SwingDelay > 3) SwingDelay--; else SwingDelay = 9;
 			return 1;
-		case 0x40: WeiBa_Bit ^= 1; return 1;
+		case 0x40:
+			WeiBa_Bit ^= 1;
+			if (!WeiBa_Bit) { tail_angle = 90; tail_direction = 1; Servo_SetTarget(4, 90, 150); }
+			return 1;
 		case 0x41: action = 10; Face_Mode = 2; break;
 		case 0x42: action = 11; Face_Mode = 2; break;
 		case 0x43: action = 13; Face_Mode = 6; break;
-		case 0x44: AllLed = 1; return 1;
-		case 0x45: AllLed = 0; return 1;
-		case 0x46: BreatheLed = 1; return 1;
-		case 0x47: BreatheLed = 0; return 1;
+		case 0x44: AllLed = 1; LED_Breathing(); return 1;
+		case 0x45: AllLed = 0; LED_Breathing(); return 1;
+		case 0x46: BreatheLed = 1; PanDuan = 1; HuXi = 0; Wait = 0; LED_Breathing(); return 1;
+		case 0x47: BreatheLed = 0; LED_Breathing(); return 1;
 		case 0x48: action = 14; Face_Mode = 6; break;
 		case 0x49: action = 15; Face_Mode = 6; break;
 		case 0x50: Battery_Bit ^= 1; return 1;
@@ -84,6 +90,15 @@ void PetState_Task1s(void)
 {
 	uint32_t idle_ms;
 	status.uptime_seconds++;
+	if (Status_Display_Seconds > 0)
+	{
+		Status_Display_Seconds--;
+		if (Status_Display_Seconds == 0)
+		{
+			Status_Display_Bit = 0;
+			Face_Mode = 5; /*状态页超时后回到站立/待机表情*/
+		}
+	}
 	idle_ms = Scheduler_Millis() - status.last_interaction_ms;
 
 	if (CurBattery > 0 && CurBattery <= LOW_BATTERY_LEVEL)
@@ -99,12 +114,18 @@ void PetState_Task1s(void)
 	if (IsMotion((uint8_t)Action_Mode) && PetAction_IsBusy())
 	{
 		if (status.energy > 0) status.energy--;
-		status.activity = status.energy > 70 ? 90 : 60;
+		if (status.activity <= 95) status.activity += 5;
+		else status.activity = 100;
 	}
 	else
 	{
+		uint8_t minimum_activity = status.sleeping ? 10 : 35;
 		if (status.energy < 100) status.energy++;
-		status.activity = status.sleeping ? 10 : 35;
+		if (status.activity > minimum_activity)
+		{
+			if (status.activity >= minimum_activity + 2) status.activity -= 2;
+			else status.activity = minimum_activity;
+		}
 	}
 
 	if (idle_ms >= SLEEP_TIMEOUT_MS && !status.sleeping)
@@ -115,11 +136,6 @@ void PetState_Task1s(void)
 		PetAction_Request(0, 0);
 	}
 	if (idle_ms > 30000 && status.mood > 10) status.mood--;
-	if (status.mood >= 80 && !status.sleeping && !PetAction_IsBusy())
-	{
-		WeiBa_Bit = 1;
-		Face_Mode = 2;
-	}
 }
 
 const PetStatus *PetState_Get(void)

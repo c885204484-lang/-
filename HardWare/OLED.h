@@ -22,6 +22,7 @@
 
 /*初始化函数*/
 void OLED_Init(void);
+void OLED_Wakeup(void);   /* 热插拔唤醒：重发OLED配置命令 */
 
 /*更新函数*/
 void OLED_Update(void);

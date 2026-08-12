@@ -33,5 +33,8 @@ extern uint16_t temp1;           //100次电量累加值
 extern uint16_t CurBattery;      //当前电量
 extern uint8_t Battery_num;      //获取电量滤波系数
 extern uint8_t Battery_Bit;
+extern uint8_t Battery_Charging;
+extern uint8_t Status_Display_Bit;
+extern uint8_t Status_Display_Seconds;
 
 #endif
