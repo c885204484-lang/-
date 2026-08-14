@@ -1,8 +1,17 @@
+/**
+  ******************************************************************************
+  * @file    Delay.h
+  * @brief   阻塞式延时工具接口（见 Delay.c 详细说明）
+  * @note    本项目动作主流程已使用非阻塞调度，仅初始化/校准等场景使用阻塞延时
+  ******************************************************************************
+  */
 #ifndef __DELAY_H
 #define __DELAY_H
 
-void Delay_us(uint32_t us);
-void Delay_ms(uint32_t ms);
-void Delay_s(uint32_t s);
+#include "stm32f10x.h"
+
+void Delay_us(uint32_t us);   /* 微秒级阻塞延时 */
+void Delay_ms(uint32_t ms);   /* 毫秒级阻塞延时 */
+void Delay_s(uint32_t s);     /* 秒级阻塞延时 */
 
 #endif

@@ -1,6 +1,12 @@
+/**
+  ******************************************************************************
+  * @file    Face_Config.h
+  * @brief   OLED 表情与电量显示模块接口（见 Face_Config.c 详细说明）
+  ******************************************************************************
+  */
 #ifndef __FACE_CONFIG_
 #define __FACE_CONFIG_
 
-void Face_Config(void);
+void Face_Config(void);   /* 表情/电量按需刷新任务（清醒时每200ms，睡眠时每1000ms） */
 
 #endif

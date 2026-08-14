@@ -24,6 +24,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 
+/*
+ * ============================================================================
+ * 本项目实际使用的中断服务函数位置说明（模板文件，勿重复定义）：
+ *   - SysTick_Handler（1ms 时基）   -> HardWare/Scheduler.c
+ *   - USART1_IRQHandler（语音接收） -> HardWare/BlueTooth.c
+ *   - USART3_IRQHandler（蓝牙接收） -> HardWare/BlueTooth.c
+ * 其余异常处理（NMI/HardFault/...）沿用下方标准模板。
+ * ============================================================================
+ */
+
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
   */

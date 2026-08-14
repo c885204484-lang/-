@@ -1,3 +1,9 @@
+/**
+  ******************************************************************************
+  * @file    Variable.h
+  * @brief   全局运行参数声明（兼容原项目的全局变量风格）
+  ******************************************************************************
+  */
 #ifndef __VARIABLE_H_
 #define __VARIABLE_H_
 
@@ -27,14 +33,14 @@ extern uint16_t AllLed;          //开启灯光
 extern uint16_t BreatheLed;    //开启呼吸灯
 
 /*测电量相关*/
-extern float Battery_Value;
+extern float Battery_Value;      //当前电量百分比
 extern uint16_t temp;            //每20ms测得的当前电量(单次采样值)
 extern uint16_t temp1;           //100次电量累加值
-extern uint16_t CurBattery;      //当前电量
+extern uint16_t CurBattery;      //当前电量（滤波后最终值）
 extern uint8_t Battery_num;      //获取电量滤波系数
-extern uint8_t Battery_Bit;
-extern uint8_t Battery_Charging;
-extern uint8_t Status_Display_Bit;
-extern uint8_t Status_Display_Seconds;
+extern uint8_t Battery_Bit;      //OLED 电量显示开关
+extern uint8_t Battery_Charging; //充电中标志
+extern uint8_t Status_Display_Bit;   //状态显示页开关
+extern uint8_t Status_Display_Seconds; //状态页剩余显示秒数
 
 #endif
